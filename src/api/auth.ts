@@ -1,19 +1,20 @@
-const API_URL = 'http://localhost:3000/api/auth';
+import axios from "axios";
 
-export const login = async (username: string, password: string): Promise<string> => {
-    const response = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-    });
+const API_URL = "http://localhost:3000/api/auth";
 
-    if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Erro ao realizar login');
+export const login = async (
+    username: string,
+    password: string
+): Promise<string> => {
+    try {
+        const response = await axios.post(`${API_URL}/login`, {
+            username,
+            password,
+        });
+        return response.data.token; // Retorna o token JWT
+    } catch (error: any) {
+        const errorMessage =
+            error.response?.data?.message || "Erro ao realizar login";
+        throw new Error(errorMessage);
     }
-
-    const data = await response.json();
-    return data.token; // Retornar o token JWT
 };
